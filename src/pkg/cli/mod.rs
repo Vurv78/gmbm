@@ -14,13 +14,14 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 		(@subcommand verify =>
 			(about: "Verifies that a binary module built correctly")
 			(@arg PKG_NAME: +required "Sets the pkg to verify, same as in clone")
-			(@arg pkg_dir: -pd ... "Sets the directory where the packages will be found. Defaults to std::env::current_dir")
+			(@arg pkg_dir: -p ... "Sets the directory where the packages will be found. Defaults to std::env::current_dir")
 		)
 		(@subcommand install =>
 			(about: "Builds and installs a binary module to your garrysmod/lua/bin folder.")
 			(@arg PKG_NAME: +required "The pkg to send, same as in clone")
-			(@arg pkg_dir: -pd ... "Sets the directory where the packages will be found. Defaults to std::env::current_dir")
+			(@arg pkg_dir: -p ... "Sets the directory where the packages will be found. Defaults to std::env::current_dir")
 			(@arg gmod_dir: -d ... "Sets the gmod directory to replace the module in. By default scans your filesystem for gmod.")
+			(@arg realm: -r ... "Sets the realm to install. Either 'sv' or 'cl' for Serverside and Clientside respectively.")
 		)
 	).get_matches();
 
@@ -36,7 +37,6 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 		},
 
 		Some( ("verify", x) ) => {
-
 			let pkg_name = x.value_of("PKG_NAME").unwrap();
 			let dir = match x.value_of("dir") {
 				Some(path) => path.into(),
@@ -61,9 +61,17 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 			use std::path::PathBuf;
 
 			let pkg_name = x.value_of("PKG_NAME").unwrap();
+
+			// Package main dir
 			let dir = match x.value_of("dir") {
 				Some(path) => path.into(),
 				None => std::env::current_dir()?
+			};
+
+			// Gmod realm. Defaults to client
+			let realm = match x.value_of("realm") {
+				Some(realm) => realm,
+				None => "cl"
 			};
 
 			fn find_gmod_dir() -> Option<PathBuf> {
@@ -89,8 +97,8 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 
 			// Handle gmod path
 			// Creates garrysmod/lua/bin if missing, then copies the pkg to gmsv
-			fn handle(pkg_name: &str, mpath: PathBuf, p: PathBuf) {
-				let bin_dir = p
+			fn install(pkg_name: &str, mpath: PathBuf, gmod_dir: PathBuf, realm: &str) {
+				let bin_dir = gmod_dir
 					.join("garrysmod")
 					.join("lua")
 					.join("bin");
@@ -114,9 +122,14 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 							}
 						}
 
+						let final_dir = bin_dir
+							.join( format!("gm{}_{}_{}{}.dll", realm, p.name, "win", std::mem::size_of::<usize>() * 8 ) );
+
 						// Assume it exists now.
-						if let Err(why) = std::fs::copy(dll_path, bin_dir) {
+						if let Err(why) = std::fs::copy(&dll_path, &final_dir) {
 							error!("{}", why);
+						} else {
+							println!( "Installed to {}", final_dir.display().to_string().yellow() );
 						}
 					},
 					Err(why) => error!("Failed to open package {}. [{}]", pkg_name, why.to_string()),
@@ -124,10 +137,10 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 			}
 
 			match x.value_of("gmod_dir") {
-				Some(gmod_dir) => handle(pkg_name, dir, gmod_dir.into()),
+				Some(gmod_dir) => install(pkg_name, dir, gmod_dir.into(), realm),
 				None => {
 					match find_gmod_dir() {
-						Some(gmod_dir) => handle(pkg_name, dir, gmod_dir),
+						Some(gmod_dir) => install(pkg_name, dir, gmod_dir, realm),
 						None => error!("Couldn't find your garrysmod dir. Set the -d or --gmod_dir flags.")
 					}
 				}
