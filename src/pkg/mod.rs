@@ -6,20 +6,18 @@ use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum PackageOpen {
-	InvalidDir
+	InvalidDir,
+	NoMain
 }
 
 use std::fmt;
 impl fmt::Display for PackageOpen {
 	fn fmt( &self, f: &mut fmt::Formatter<'_> ) -> fmt::Result {
-		write!(f, "Error when opening package: ({})", match self {
+		write!(f, "{}", match self {
 			PackageOpen::InvalidDir => "Invalid Dir",
+			PackageOpen::NoMain => "main.dll was not found",
 		})
 	}
-}
-
-impl std::error::Error for PackageOpen {
-
 }
 
 pub struct Package<'a> {
@@ -56,13 +54,15 @@ impl<'a> Package<'a> {
 			return Err( PackageOpen::InvalidDir )
 		}
 
+		let fm = pelite::FileMap::open( &cache.join("main.dll") ).map_err( |_| PackageOpen::NoMain )?;
+
 		Ok(Self {
 			name: name,
 			repo: "", // Temporary
 			mpath: mpath,
 
 			cache: cache,
-			filemap: None
+			filemap: Some(fm)
 		})
 	}
 }
