@@ -11,3 +11,6 @@ anyhow = "1.0.42"
 
 log = "0.4.14"
 simplelog = "0.10.0"
+
+# cli
+clap = "3.0.0-beta.4"
