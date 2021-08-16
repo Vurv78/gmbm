@@ -1,0 +1,40 @@
+name: Build & Lint
+
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+
+# Repurposed from Autorun-rs
+
+jobs:
+  buildx86_64:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: cargo build --release --verbose
+
+    - name: Upload program
+      uses: actions/upload-artifact@v2
+      with:
+        name: Windows 64 Bit
+        path: target/release/gm_binpkg.exe
+
+    - name: Lint
+      run: cargo clippy
+
+  buildx86:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: |
+        rustup target add i686-pc-windows-msvc
+        cargo build --release --verbose --target=i686-pc-windows-msvc
+
+    - name: Upload program
+      uses: actions/upload-artifact@v2
+      with:
+        name: Windows 32 Bit
+        path: target/i686-pc-windows-msvc/release/gm_binpkg.exe
