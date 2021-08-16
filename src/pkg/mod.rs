@@ -1,21 +1,21 @@
 pub(crate) mod build;
 pub(crate) mod process;
+pub(crate) mod clone;
+
 pub(crate) mod cli;
 
 use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum PackageOpen {
-	InvalidDir,
-	NoMain
+	NotFound
 }
 
 use std::fmt;
 impl fmt::Display for PackageOpen {
 	fn fmt( &self, f: &mut fmt::Formatter<'_> ) -> fmt::Result {
 		write!(f, "{}", match self {
-			PackageOpen::InvalidDir => "Invalid Dir",
-			PackageOpen::NoMain => "main.dll was not found",
+			PackageOpen::NotFound => "Package not found"
 		})
 	}
 }
@@ -51,10 +51,8 @@ impl<'a> Package<'a> {
 			.join(name);
 
 		if !cache.exists() {
-			return Err( PackageOpen::InvalidDir )
+			return Err( PackageOpen::NotFound )
 		}
-
-		let fm = pelite::FileMap::open( &cache.join("main.dll") ).map_err( |_| PackageOpen::NoMain )?;
 
 		Ok(Self {
 			name: name,
@@ -62,7 +60,7 @@ impl<'a> Package<'a> {
 			mpath: mpath,
 
 			cache: cache,
-			filemap: Some(fm)
+			filemap: None
 		})
 	}
 }

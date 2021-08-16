@@ -9,10 +9,9 @@ edition = "2018"
 pelite = "0.9.0"
 anyhow = "1.0.42"
 
-log = "0.4.14"
-simplelog = "0.10.0"
-
 # cli
 clap = "3.0.0-beta.4"
 
 colored = "2.0.0"
+
+cc = "1.0.69" # Compiling C++, Using windows tools

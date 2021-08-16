@@ -1,10 +1,10 @@
 mod pkg;
 
-#[macro_use] extern crate log;
-
 fn main() -> anyhow::Result<()> {
+	use colored::*;
+
 	if let Err(why) = pkg::cli::process() {
-		error!("Error when setting up cli. {}", why);
+		println!( "Error when setting up cli. {}", why.to_string().red() );
 	}
 
 	Ok(())

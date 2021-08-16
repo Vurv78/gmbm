@@ -7,9 +7,14 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 		(author: "Vurv78 <vurvdevelops@gmail.com>")
 		(about: "Allows you to download garrysmod binary modules in one neat hub.")
 		(@subcommand clone =>
-			(about: "Clones a binary module repo")
+			(about: "Clones a binary module repo, without building it.")
 			(@arg REPO_URL: +required "Sets the input repo to use. Ex: https://github.com/Vurv78/Autorun-rs")
 			(@arg PKG_NAME: +required "Sets the output name and folder to use for the binpkg")
+		)
+		(@subcommand build =>
+			(about: "Builds a binary module from a repo.")
+			(@arg PKG_NAME: +required "Sets the input repo to use. Ex: vistrace")
+			(@arg pkg_dir: -p ... "Sets the directory where the packages will be found. Defaults to std::env::current_dir")
 		)
 		(@subcommand verify =>
 			(about: "Verifies that a binary module built correctly")
@@ -30,11 +35,32 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 			let repo_url = x.value_of("REPO_URL").unwrap();
 			let pkg_name = x.value_of("PKG_NAME").unwrap();
 
-			let mut pkg = Package::new( pkg_name, repo_url, std::env::current_dir()? );
-			if let Err(why) = pkg.build() {
-				error!("Errored when building package {}, '{}'", pkg_name, why);
+			let mut p = Package::new( pkg_name, repo_url, std::env::current_dir()? );
+			if let Err(why) = p.clone() {
+				println!( "Errored on clone: {}", why.to_string().red() )
+			} else {
+				println!("Cloned");
 			}
 		},
+
+		Some( ("build", x) ) => {
+			let pkg_name = x.value_of("PKG_NAME").unwrap();
+
+			let mpath = match x.value_of("dir") {
+				Some(path) => path.into(),
+				None => std::env::current_dir()?
+			};
+
+			match Package::open(pkg_name, mpath) {
+				Err(why) => println!( "Errored when opening package {}, [{}]", pkg_name.yellow(), why.to_string().red() ),
+				Ok(mut pkg) => {
+					match pkg.build() {
+						Err(why) => println!( "Errored when building package {}, [{}]", pkg_name.yellow(), why.to_string().red() ),
+						Ok(_) => println!( "Built package {} {}!", pkg_name.yellow(), "successfully".green() )
+					}
+				}
+			}
+		}
 
 		Some( ("verify", x) ) => {
 			let pkg_name = x.value_of("PKG_NAME").unwrap();
@@ -106,7 +132,7 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 				if !bin_dir.is_dir() {
 					println!("Bin directory @{} didn't exist, creating!", bin_dir.display().to_string().yellow());
 					if let Err(why) = std::fs::create_dir_all(&bin_dir) {
-						error!("Failed to create dir {} [{}]. Aborting install!", bin_dir.display(), why);
+						println!( "Failed to create dir {} [{}]. Aborting install!", bin_dir.display().to_string().yellow(), why.to_string().red() );
 						return;
 					}
 				}
@@ -127,12 +153,12 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 
 						// Assume it exists now.
 						if let Err(why) = std::fs::copy(&dll_path, &final_dir) {
-							error!("{}", why);
+							println!("Failed to copy dll {} to {}, [{}]", dll_path.display().to_string().yellow(), final_dir.display().to_string().yellow(), why.to_string().red() );
 						} else {
 							println!( "Installed to {}", final_dir.display().to_string().yellow() );
 						}
 					},
-					Err(why) => error!("Failed to open package {}. [{}]", pkg_name, why.to_string()),
+					Err(why) => println!( "Failed to open package {}. [{}]", pkg_name.yellow(), why.to_string().red() ),
 				};
 			}
 
@@ -141,7 +167,7 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 				None => {
 					match find_gmod_dir() {
 						Some(gmod_dir) => install(pkg_name, dir, gmod_dir, realm),
-						None => error!("Couldn't find your garrysmod dir. Set the -d or --gmod_dir flags.")
+						None => println!("Couldn't find your garrysmod dir. Set the {} or {} flags.", "-d".yellow(), "--gmod_dir".yellow())
 					}
 				}
 			};
