@@ -13,7 +13,7 @@ pub(crate) fn try_compile(cache_dir: &PathBuf, main_path: &PathBuf, out_path: &P
 
 	let code = msbuild
 		.to_command()
-		.args( [&main_dir, "-noLogo", "-m:5", "-verbosity:quiet", &format!("-p:OutDir={}", build_dir.display()), "-p:TargetName=main" ] )
+		.args( [&main_dir, "-noLogo", "-m:5", "-verbosity:quiet", &format!("-p:OutDir={}", build_dir.display()), "-p:TargetName=main", "-p:Configuration=Release" ] )
 		.status()
 		.map_err(|x| BuildError::Io(x))?;
 
