@@ -1,11 +1,9 @@
 mod pkg;
 
-fn main() -> anyhow::Result<()> {
+fn main() {
 	use colored::*;
 
 	if let Err(why) = pkg::cli::process() {
 		println!( "Error when setting up cli. {}", why.to_string().red() );
 	}
-
-	Ok(())
 }
