@@ -9,8 +9,6 @@ pub fn clone(x: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>{
 		repo_url.split("/").last().unwrap()
 	});
 
-	println!("Pkg name: {}", pkg_name);
-
 	let mut p = Package::new( pkg_name, repo_url, std::env::current_dir()? );
 	if let Err(why) = p.clone() {
 		println!( "Errored on clone: {}", why.to_string().red() )
