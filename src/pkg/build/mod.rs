@@ -1,6 +1,9 @@
 use super::Package;
+
 mod gcc;
 mod msbuild;
+mod cmake;
+mod premake;
 
 #[derive(Debug)]
 pub enum BuildError {

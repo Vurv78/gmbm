@@ -14,3 +14,5 @@ clap = "3.0.0-beta.4"
 colored = "2.0.0"
 
 cc = "1.0.69" # Compiling C++, Using windows tools
+
+cmake = "0.1.45"

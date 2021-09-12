@@ -11,6 +11,9 @@ Clone and build github repos to DLLs to use in garrysmod.
 ## Supported Languages / Compilers
 * C++ (GCC + MSBuild)
 
+# Installation
+1. Download the latest exe from the releases page or from github actions artifacts.
+2. Add the directory you put the exe in to your PATH.
 ## Todo
 1. Rust / Cargo support
 2. C Support
