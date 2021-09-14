@@ -39,8 +39,8 @@ impl<'a> Package<'a> {
 		let out_path = cache_dir
 			.join("main.dll");
 
-		use crate::pkg::process::CompilerTarget::*;
-		match self.identify_compiler() {
+		use crate::pkg::process::BuildTarget::*;
+		match self.identify_target() {
 			Ok(x) => match x {
 				Cargo => todo!(),
 				MSBuild => {
@@ -48,6 +48,11 @@ impl<'a> Package<'a> {
 						bail!("{}", why)
 					}
 				},
+				CMake => {
+					if let Err(why) = cmake::try_compile(cache_dir, repo_dir, &out_path) {
+						bail!("{}", why)
+					}
+				}
 				NotFound => bail!("Unknown compiler")
 			}
 			Err(why) => bail!(why)

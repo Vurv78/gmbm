@@ -11,7 +11,8 @@ pub(crate) fn try_compile(cache_dir: &PathBuf, repo_dir: &PathBuf, out_path: &Pa
 
 	let code = msbuild
 		.to_command()
-		.args( [&repo_dir.display().to_string(), "-noLogo", "-m:5", "-verbosity:quiet", &format!("-p:OutDir={}", build_dir.display()), "-p:TargetName=main", "-p:Configuration=Release" ] )
+		.current_dir(repo_dir)
+		.args( [".", "-noLogo", "-m:5", "-verbosity:quiet", &format!("-p:OutDir={}", build_dir.display()), "-p:TargetName=main", "-p:Configuration=Release" ] )
 		.status()
 		.map_err(|x| BuildError::Io(x))?;
 

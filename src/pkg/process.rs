@@ -26,9 +26,10 @@ pub type VerifyResult = Result<(), VerifyError>;
 const GMOD_DLLOPEN: &str = "gmod13_open";
 const GMOD_DLLCLOSE: &str = "gmod13_close";
 
-pub enum CompilerTarget {
+pub enum BuildTarget {
 	MSBuild,
 	Cargo,
+	CMake,
 	NotFound
 }
 
@@ -52,15 +53,22 @@ impl<'a> Package<'a> {
 	}
 
 	// Tries to find what to compile the package with.
-	pub fn identify_compiler(&self) -> anyhow::Result<CompilerTarget> {
+	pub fn identify_target(&self) -> anyhow::Result<BuildTarget> {
 		if !self.cache.exists() {
 			bail!("Cache does not exist")
 		}
 
 		{
-			let cargo_toml = self.cache.join("Cargo.toml");
+			let cargo_toml = self.repo.join("Cargo.toml");
 			if cargo_toml.exists() {
-				return Ok(CompilerTarget::Cargo);
+				return Ok(BuildTarget::Cargo);
+			}
+		}
+
+		{
+			let cmakelists = self.repo.join("CMakeLists.txt");
+			if cmakelists.exists() {
+				return Ok(BuildTarget::CMake);
 			}
 		}
 
@@ -70,12 +78,12 @@ impl<'a> Package<'a> {
 				let path = file.path();
 				if let Some(ext) = path.extension() {
 					if ext == "sln" {
-						return Ok(CompilerTarget::MSBuild);
+						return Ok(BuildTarget::MSBuild);
 					}
 				}
 			}
 		}
 
-		Ok(CompilerTarget::NotFound)
+		Ok(BuildTarget::NotFound)
 	}
 }
