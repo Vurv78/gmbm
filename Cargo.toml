@@ -1,18 +1,24 @@
 [package]
 name = "gm_binpkg"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-pelite = "0.9.0"
-
 # cli
 clap = "3.0.0-beta.4"
-
 colored = "2.0.0"
 
+# targets
 cc = "1.0.69" # Compiling C++, Using windows tools
-
 cmake = "0.1.45"
+
+# misc
+pelite = "0.9.0"
+url = "2.2.2"
+
+serde = { version = "1.0.130", features = ["derive"] }
+toml = "0.5.8"
+
+anyhow = "1.0.44"

@@ -2,8 +2,6 @@ mod commands;
 pub(crate) use super::Package;
 
 pub fn process() -> Result<(), Box<dyn std::error::Error>>{
-	use colored::*;
-
 	let opts = clap::clap_app!(myapp =>
 		(version: "0.1.0")
 		(author: "Vurv78 <vurvdevelops@gmail.com>")

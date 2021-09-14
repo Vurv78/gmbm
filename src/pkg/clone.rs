@@ -22,16 +22,18 @@ impl<'a> Package<'a> {
 	pub fn clone(&mut self) -> Result<(), CloneError> {
 		let cache_dir = &self.cache;
 
-		if cache_dir.exists() {
+		let git_dir = cache_dir.join("repo");
+
+		if git_dir.exists() {
 			return Err( CloneError::Exists );
 		}
 
-		std::fs::create_dir_all(&cache_dir).map_err(|x| CloneError::Io(x))?;
+		std::fs::create_dir_all(&git_dir).map_err(|x| CloneError::Io(x))?;
 
 		// Clone repo of the package
 		let status = Command::new("git")
 			.current_dir( &cache_dir )
-			.args( ["clone", self.repo, self.name, "--recurse-submodules"] )
+			.args( ["clone", self.repo_url.as_str(), "repo", "--recurse-submodules"] )
 			.status()
 			.map_err(|x| CloneError::Io(x))?;
 

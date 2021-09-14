@@ -1,9 +1,6 @@
-use std::error::Error;
-
 use clap::ArgMatches;
-use super::Package;
 
-pub fn init(x: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
+pub fn init(_: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
 	let pkg_dir = std::env::current_dir()?;
 
 	let package_dir = pkg_dir.join("cache"); // Package source install directories, where they're built and then installed to your gmod dir.

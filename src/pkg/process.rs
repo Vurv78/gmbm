@@ -1,4 +1,5 @@
 use super::Package;
+use anyhow::bail;
 
 #[derive(Debug)]
 pub enum VerifyError {
@@ -25,6 +26,12 @@ pub type VerifyResult = Result<(), VerifyError>;
 const GMOD_DLLOPEN: &str = "gmod13_open";
 const GMOD_DLLCLOSE: &str = "gmod13_close";
 
+pub enum CompilerTarget {
+	MSBuild,
+	Cargo,
+	NotFound
+}
+
 impl<'a> Package<'a> {
 	pub fn verify(&self) -> VerifyResult {
 		if let Some(ref fm) = self.filemap {
@@ -42,5 +49,33 @@ impl<'a> Package<'a> {
 		} else {
 			Err( VerifyError::NotBuilt )
 		}
+	}
+
+	// Tries to find what to compile the package with.
+	pub fn identify_compiler(&self) -> anyhow::Result<CompilerTarget> {
+		if !self.cache.exists() {
+			bail!("Cache does not exist")
+		}
+
+		{
+			let cargo_toml = self.cache.join("Cargo.toml");
+			if cargo_toml.exists() {
+				return Ok(CompilerTarget::Cargo);
+			}
+		}
+
+		{
+			for file in std::fs::read_dir(&self.repo)? {
+				let file = file?;
+				let path = file.path();
+				if let Some(ext) = path.extension() {
+					if ext == "sln" {
+						return Ok(CompilerTarget::MSBuild);
+					}
+				}
+			}
+		}
+
+		Ok(CompilerTarget::NotFound)
 	}
 }

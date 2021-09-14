@@ -9,11 +9,23 @@ pub fn clone(x: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>{
 		repo_url.split("/").last().unwrap()
 	});
 
-	let mut p = Package::new( pkg_name, repo_url, std::env::current_dir()? );
-	if let Err(why) = p.clone() {
-		println!( "Errored on clone: {}", why.to_string().red() )
-	} else {
-		println!("Cloned");
+	match url::Url::parse(repo_url) {
+		Ok(url) => {
+			match Package::create( pkg_name, url, std::env::current_dir()? ) {
+				Ok(mut pkg) => {
+					if let Err(why) = pkg.clone() {
+						println!( "Errored on clone: {}", why.to_string().red().bold() )
+					} else {
+						println!("Cloned {} successfully", repo_url);
+					}
+				},
+
+				Err(e) => println!("{}", e.to_string().red().bold())
+			}
+		},
+		Err(e) => {
+			println!("{}: {}", "Invalid URL".red(), e);
+		}
 	}
 
 	Ok(())

@@ -1,4 +1,5 @@
 use super::Package;
+use anyhow::bail;
 
 mod gcc;
 mod msbuild;
@@ -27,33 +28,32 @@ impl std::fmt::Display for BuildError {
 }
 
 impl<'a> Package<'a> {
-	pub fn build(&mut self) -> Result<(), BuildError> {
+	pub fn build(&mut self) -> anyhow::Result<()>{
 		let cache_dir = &self.cache;
+		let repo_dir = &self.cache.join("repo");
 
-		if !cache_dir.exists() {
-			return Err( BuildError::Missing );
+		if !repo_dir.exists() {
+			bail!("Repo directory doesn't exist. Not cloned yet?")
 		}
 
 		let out_path = cache_dir
 			.join("main.dll");
 
-		if out_path.exists() {
-			return Err( BuildError::AlreadyBuilt );
+		use crate::pkg::process::CompilerTarget::*;
+		match self.identify_compiler() {
+			Ok(x) => match x {
+				Cargo => todo!(),
+				MSBuild => {
+					if let Err(why) = msbuild::try_compile(cache_dir, repo_dir, &out_path) {
+						bail!("{}", why)
+					}
+				},
+				NotFound => bail!("Unknown compiler")
+			}
+			Err(why) => bail!(why)
 		}
 
-		let main_path = cache_dir
-			.join(self.name)
-			.join("main.cpp");
-
-		// TODO: Use .exit_ok()? when it's stabilized.
-		match msbuild::try_compile( cache_dir, &main_path, &out_path ) {
-			Ok(_) => println!("Successfully compiled."),
-			Err(why) => {
-				return Err(why);
-			},
-		}
-
-		self.filemap = Some( pelite::FileMap::open(&out_path).map_err(|x| BuildError::Io(x))? );
+		self.filemap = Some( pelite::FileMap::open(&out_path)? );
 		Ok(())
 	}
 }
