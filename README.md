@@ -10,7 +10,7 @@ Clone and build github repos to DLLs to use in garrysmod.
 * ``verify`` - Verifies the integrity of a package's DLL. (Does basic checks for now.)
 
 ## Supported Languages / Compilers
-* C++ (GCC + MSBuild)
+* C/C++ (MSBuild & CMake)
 
 ## Installation
 1. Download the latest exe from the releases page or from github actions artifacts.
@@ -29,7 +29,3 @@ gm_binpkg install vistrace
 
 # From here, just require("vistrace") inside of gmod, and you're good to go!
 ```
-## Todo
-1. Rust / Cargo support
-2. C Support
-3. C# Support (Probably won't happen)
