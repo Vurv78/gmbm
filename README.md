@@ -1,6 +1,5 @@
-## ``gm_binpkg``
-Package manager for garrysmod binary modules.  
-Clone and build github repos to DLLs to use in garrysmod.  
+# ``gm_binpkg`` [![Release Shield](https://img.shields.io/github/v/release/Vurv78/gm_binpkg)](https://github.com/Vurv78/gm_binpkg/releases/latest) ![CI](https://github.com/Vurv78/Autorun-rs/workflows/Build/badge.svg) [![github/Vurv78](https://img.shields.io/discord/824727565948157963?label=Discord&logo=discord&logoColor=ffffff&labelColor=7289DA&color=2c2f33)](https://discord.gg/epJFC6cNsw)
+> Easily install binary modules for use in garrysmod.  
 
 ## Commands
 * ``init`` - Initializes gm_binpkg at the cwd. You will need to run this when first installing gm_binpkg in the future, but right now it is optional.
