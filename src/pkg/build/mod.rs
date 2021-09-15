@@ -5,6 +5,7 @@ mod gcc;
 mod msbuild;
 mod cmake;
 mod premake;
+mod cargo;
 
 #[derive(Debug)]
 pub enum BuildError {
@@ -42,7 +43,11 @@ impl<'a> Package<'a> {
 		use crate::pkg::process::BuildTarget::*;
 		match self.identify_target() {
 			Ok(x) => match x {
-				Cargo => todo!(),
+				Cargo => {
+					if let Err(why) = cargo::try_compile(cache_dir, repo_dir, &out_path) {
+						bail!("{}", why)
+					}
+				},
 				MSBuild => {
 					if let Err(why) = msbuild::try_compile(cache_dir, repo_dir, &out_path) {
 						bail!("{}", why)
