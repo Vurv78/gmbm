@@ -9,6 +9,7 @@
 * ``verify`` - Verifies the integrity of a package's DLL. (Does basic checks for now.)
 
 ## Supported Languages / Compilers
+* Rust (Cargo)
 * C/C++ (MSBuild & CMake)
 
 ## Installation
