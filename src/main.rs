@@ -1,4 +1,5 @@
 mod pkg;
+mod util;
 
 fn main() {
 	use colored::*;

@@ -11,7 +11,7 @@ use url::Url;
 pub struct Package<'a> {
 	pub name: &'a str,
 	pub repo_url: Url,
-	pub mpath: PathBuf, // std::env::current_dir by default
+	pub mpath: PathBuf, // Current exe dir by default
 
 	pub cache: PathBuf,
 	pub repo: PathBuf,
@@ -38,7 +38,7 @@ impl<'a> Package<'a> {
 		let repo_dir = cache.join("repo");
 
 		if let Err(why) = std::fs::create_dir_all(&cache) {
-			bail!("IO Error: {}", why);
+			bail!("IO Error: {} {}", cache.display(), why);
 		}
 
 		match std::fs::File::create(cache.join("pkg.toml")) {

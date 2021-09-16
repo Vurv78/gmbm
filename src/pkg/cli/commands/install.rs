@@ -11,7 +11,7 @@ pub fn install(x: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
 	// Package main dir
 	let dir = match x.value_of("dir") {
 		Some(path) => path.into(),
-		None => std::env::current_dir()?
+		None => crate::util::current_exe_dir()?
 	};
 
 	// Gmod realm. Defaults to client

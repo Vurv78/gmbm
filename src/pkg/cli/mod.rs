@@ -2,8 +2,8 @@ mod commands;
 pub(crate) use super::Package;
 
 pub fn process() -> Result<(), Box<dyn std::error::Error>>{
-	let opts = clap::clap_app!(myapp =>
-		(version: "0.1.0")
+	let opts = clap::clap_app!(gm_binpkg =>
+		(version: "0.3.0")
 		(author: "Vurv78 <vurvdevelops@gmail.com>")
 		(about: "Allows you to download garrysmod binary modules in one neat hub.")
 		(@subcommand init =>
@@ -17,17 +17,17 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 		(@subcommand build =>
 			(about: "Builds a binary module from a repo.")
 			(@arg PKG_NAME: +required "Sets the input repo to use. Ex: gm_bromsocket")
-			(@arg pkg_dir: -p ... "Sets the directory where the packages will be found. Defaults to std::env::current_dir")
+			(@arg pkg_dir: -p ... "Sets the directory where the packages will be found. Defaults to exe dir")
 		)
 		(@subcommand verify =>
 			(about: "Verifies that a binary module built correctly")
 			(@arg PKG_NAME: +required "Sets the pkg to verify, same as in clone")
-			(@arg pkg_dir: -p ... "Sets the directory where the packages will be found. Defaults to std::env::current_dir")
+			(@arg pkg_dir: -p ... "Sets the directory where the packages will be found. Defaults to exe dir")
 		)
 		(@subcommand install =>
 			(about: "Builds and installs a binary module to your garrysmod/lua/bin folder.")
 			(@arg PKG_NAME: +required "The pkg to send, same as in clone")
-			(@arg pkg_dir: -p ... "Sets the directory where the packages will be found. Defaults to std::env::current_dir")
+			(@arg pkg_dir: -p ... "Sets the directory where the packages will be found. Defaults to exe dir")
 			(@arg gmod_dir: -d ... "Sets the gmod directory to replace the module in. By default scans your filesystem for gmod.")
 			(@arg realm: -r ... "Sets the realm to install. Either 'sv' or 'cl' for Serverside and Clientside respectively.")
 		)

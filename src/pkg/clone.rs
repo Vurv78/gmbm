@@ -33,7 +33,7 @@ impl<'a> Package<'a> {
 		// Clone repo of the package
 		let status = Command::new("git")
 			.current_dir( &cache_dir )
-			.args( ["clone", self.repo_url.as_str(), "repo", "--recurse-submodules"] )
+			.args( ["clone", self.repo_url.as_str(), "repo", "--recurse-submodules", "--quiet"] )
 			.status()
 			.map_err(|x| CloneError::Io(x))?;
 

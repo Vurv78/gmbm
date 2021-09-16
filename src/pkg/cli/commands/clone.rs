@@ -11,7 +11,7 @@ pub fn clone(x: &ArgMatches) -> Result<(), Box<dyn std::error::Error>>{
 
 	match url::Url::parse(repo_url) {
 		Ok(url) => {
-			match Package::create( pkg_name, url, std::env::current_dir()? ) {
+			match Package::create( pkg_name, url, crate::util::current_exe_dir()? ) {
 				Ok(mut pkg) => {
 					if let Err(why) = pkg.clone() {
 						println!( "Errored on clone: {}", why.to_string().red().bold() )

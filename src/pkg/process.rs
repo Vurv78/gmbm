@@ -30,6 +30,8 @@ pub enum BuildTarget {
 	MSBuild,
 	Cargo,
 	CMake,
+	GCC(std::path::PathBuf),
+	Premake5,
 	NotFound
 }
 
@@ -73,15 +75,29 @@ impl<'a> Package<'a> {
 		}
 
 		{
+			let pm = self.repo.join("premake5.lua");
+			if pm.exists() {
+				return Ok(BuildTarget::Premake5);
+			}
+		}
+
+		let mut gcc = None;
+		{
 			for file in std::fs::read_dir(&self.repo)? {
 				let file = file?;
 				let path = file.path();
 				if let Some(ext) = path.extension() {
 					if ext == "sln" {
 						return Ok(BuildTarget::MSBuild);
+					} else if ext == "cpp" {
+						gcc = Some(path)
 					}
 				}
 			}
+		}
+
+		if let Some(main_cpp) = gcc {
+			return Ok(BuildTarget::GCC(main_cpp));
 		}
 
 		Ok(BuildTarget::NotFound)
