@@ -2,8 +2,8 @@ mod commands;
 pub(crate) use super::Package;
 
 pub fn process() -> Result<(), Box<dyn std::error::Error>>{
-	let opts = clap::clap_app!(gm_binpkg =>
-		(version: "0.3.0")
+	let opts = clap::clap_app!(gmbm =>
+		(version: "0.4.0")
 		(author: "Vurv78 <vurvdevelops@gmail.com>")
 		(about: "Allows you to download garrysmod binary modules in one neat hub.")
 		(@subcommand init =>
@@ -12,7 +12,7 @@ pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 		(@subcommand clone =>
 			(about: "Clones a binary module repo, without building it.")
 			(@arg REPO_URL: +required "Sets the input repo to use. Ex: https://github.com/Vurv78/Autorun-rs")
-			(@arg PKG_NAME: "Sets the output name and folder to use for the binpkg. By default it is the name of the github repo")
+			(@arg PKG_NAME: "Sets the output name and folder to use for the package. By default it is the name of the github repo")
 		)
 		(@subcommand build =>
 			(about: "Builds a binary module from a repo.")

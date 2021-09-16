@@ -19,7 +19,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Windows 64 Bit
-        path: target/release/gm_binpkg.exe
+        path: target/release/gmbm.exe
 
     - name: Lint
       run: cargo clippy
@@ -37,4 +37,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Windows 32 Bit
-        path: target/i686-pc-windows-msvc/release/gm_binpkg.exe
+        path: target/i686-pc-windows-msvc/release/gmbm.exe
