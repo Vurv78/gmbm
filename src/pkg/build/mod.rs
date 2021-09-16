@@ -5,7 +5,7 @@ mod gcc;
 mod msbuild;
 mod cmake;
 mod cargo;
-//mod premake;
+mod premake;
 
 impl<'a> Package<'a> {
 	pub fn build(&mut self) -> anyhow::Result<()> {
