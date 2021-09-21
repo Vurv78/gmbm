@@ -1,11 +1,12 @@
 use super::Package;
-use std::process::Command;
+use crate::util;
+use std::{path::Path, process::Command};
 
 #[derive(Debug)]
 pub enum CloneError {
 	Exists,
 	Io(std::io::Error),
-	Git(i32)
+	Git(git2::Error)
 }
 
 impl std::fmt::Display for CloneError {
@@ -13,7 +14,7 @@ impl std::fmt::Display for CloneError {
 		write!(f, "{}", match self {
 			CloneError::Exists => "Already exists".to_owned(),
 			CloneError::Io(e) => format!("IO Error: {}", e),
-			CloneError::Git(code) => format!("Git clone failed with code: {}", code)
+			CloneError::Git(e) => format!("Git clone failed with code: {}", e)
 		})
 	}
 }
@@ -31,15 +32,8 @@ impl<'a> Package<'a> {
 		std::fs::create_dir_all(&git_dir).map_err(|x| CloneError::Io(x))?;
 
 		// Clone repo of the package
-		let status = Command::new("git")
-			.current_dir( &cache_dir )
-			.args( ["clone", self.repo_url.as_str(), "repo", "--recurse-submodules", "--quiet"] )
-			.status()
-			.map_err(|x| CloneError::Io(x))?;
-
-		if !status.success() {
-			return Err( CloneError::Git( status.code().unwrap_or(-1) ) );
-		}
+		git2::Repository::clone_recurse(self.repo_url.as_str(), git_dir)
+			.map_err(CloneError::Git)?;
 
 		Ok(())
 	}

@@ -1,5 +1,5 @@
 # ``gmbm`` [![Release Shield](https://img.shields.io/github/v/release/Vurv78/gmbm)](https://github.com/Vurv78/gmbm/releases/latest) ![CI](https://github.com/Vurv78/Autorun-rs/workflows/Build/badge.svg) [![github/Vurv78](https://img.shields.io/discord/824727565948157963?label=Discord&logo=discord&logoColor=ffffff&labelColor=7289DA&color=2c2f33)](https://discord.gg/epJFC6cNsw)
-> Garrys-mod binary-module manager.  
+> Binary module manager for garrysmod.  
 
 ## Commands
 * ``init`` - Initializes gmbm at the program's dir. You will need to run this when first installing gmbm in the future, but right now it is optional.
