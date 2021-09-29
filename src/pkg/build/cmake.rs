@@ -1,10 +1,10 @@
 use std::{
-	path::PathBuf,
+	path::Path,
 	process::Command
 };
 use anyhow::bail;
 
-pub(crate) fn try_compile(cache_dir: &PathBuf, repo_dir: &PathBuf, out_path: &PathBuf) -> anyhow::Result<()> {
+pub(crate) fn try_compile(cache_dir: &Path, repo_dir: &Path, out_path: &Path) -> anyhow::Result<()> {
 	let build_dir = cache_dir.join("cmake");
 
 	let status = Command::new("cmake")

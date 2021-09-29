@@ -1,10 +1,10 @@
-use std::path::PathBuf;
+use std::path::Path;
 use anyhow::{anyhow, bail};
 
-pub(crate) fn try_compile(cache_dir: &PathBuf, sln_path: &PathBuf, out_path: &PathBuf) -> anyhow::Result<()> {
+pub(crate) fn try_compile(cache_dir: &Path, sln_path: &Path, out_path: &Path) -> anyhow::Result<()> {
 	// Todo: target should probably not be hardcoded
 	let msbuild = cc::windows_registry::find_tool("x86_64-pc-windows-msvc", "msbuild")
-		.ok_or( anyhow!("Couldn't find msbuild, make sure you have Visual Studio/MSBuild installed!") )?;
+		.ok_or_else( || anyhow!("Couldn't find msbuild, make sure you have Visual Studio/MSBuild installed!") )?;
 
 	let build_dir = cache_dir.join("msbuild");
 	std::fs::create_dir_all(&build_dir)?;

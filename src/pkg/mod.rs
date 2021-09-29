@@ -52,11 +52,11 @@ impl<'a> Package<'a> {
 		}
 
 		let this = Self {
-			name: name,
-			repo_url: repo_url,
-			mpath: mpath,
+			name,
+			repo_url,
+			mpath,
 
-			cache: cache,
+			cache,
 			repo: repo_dir,
 			filemap: None
 		};
@@ -90,11 +90,11 @@ impl<'a> Package<'a> {
 		let repo_dir = cache.join("repo");
 
 		Ok(Self {
-			name: name,
-			repo_url: repo_url,
-			mpath: mpath,
+			name,
+			repo_url,
+			mpath,
 
-			cache: cache,
+			cache,
 			repo: repo_dir,
 			filemap: None
 		})

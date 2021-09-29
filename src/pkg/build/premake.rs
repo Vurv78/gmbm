@@ -1,12 +1,12 @@
 use std::{
-	path::PathBuf,
+	path::Path,
 	process::Command
 };
 use anyhow::bail;
 
 // premake5 support
 
-pub(crate) fn try_compile(cache_dir: &PathBuf, repo_dir: &PathBuf, out_path: &PathBuf) -> anyhow::Result<()> {
+pub(crate) fn try_compile(cache_dir: &Path, repo_dir: &Path, out_path: &Path) -> anyhow::Result<()> {
 	// Compile main.cpp to main.dll in the package.
 	let premake_master = crate::util::current_exe_dir()?.join("dat").join("premake5.lua");
 

@@ -15,10 +15,7 @@ pub fn install(x: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
 	};
 
 	// Gmod realm. Defaults to client
-	let realm = match x.value_of("realm") {
-		Some(realm) => realm,
-		None => "cl"
-	};
+	let realm = x.value_of("realm").unwrap_or("cl");
 
 	fn find_gmod_dir() -> Option<PathBuf> {
 		const STEAM_FOLDERS: &[&str] = &[

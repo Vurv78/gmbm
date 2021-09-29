@@ -27,7 +27,7 @@ impl<'a> Package<'a> {
 			return Err( CloneError::Exists );
 		}
 
-		std::fs::create_dir_all(&git_dir).map_err(|x| CloneError::Io(x))?;
+		std::fs::create_dir_all(&git_dir).map_err(CloneError::Io)?;
 
 		// Clone repo of the package
 		git2::Repository::clone_recurse(self.repo_url.as_str(), git_dir)

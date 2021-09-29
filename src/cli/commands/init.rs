@@ -14,7 +14,7 @@ pub fn init(_: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
 	fs::create_dir_all(&dat_dir)?;
 
 	let mut handle = File::create(dat_dir.join("premake5.lua"))?;
-	handle.write( include_bytes!("../../premake5.lua") )?;
+	handle.write_all( include_bytes!("../../premake5.lua") )?;
 
 	Ok(())
 }

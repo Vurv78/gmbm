@@ -15,13 +15,11 @@ pub(crate) fn get_first_of_ext<P: AsRef<Path>, Ext: AsRef<OsStr>>(path: P, ext: 
 
 	match std::fs::read_dir(path) {
 		Ok(dir) => {
-			for entry in dir {
-				if let Ok(entry) = entry {
-					let entry_path = entry.path();
-					if let Some(ext2) = entry_path.extension() {
-						if ext2 == ext {
-							return Some(entry_path);
-						}
+			for entry in dir.flatten() {
+				let entry_path = entry.path();
+				if let Some(ext2) = entry_path.extension() {
+					if ext2 == ext {
+						return Some(entry_path);
 					}
 				}
 			}

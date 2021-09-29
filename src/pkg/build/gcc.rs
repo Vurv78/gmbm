@@ -1,10 +1,10 @@
 use std::{
-	path::PathBuf,
+	path::Path,
 	process::Command
 };
 use anyhow::bail;
 
-pub(crate) fn try_compile(main_file: &PathBuf, out_path: &PathBuf) -> anyhow::Result<()> {
+pub(crate) fn try_compile(main_file: &Path, out_path: &Path) -> anyhow::Result<()> {
 	// main_file should exist.
 
 	// Compile main.cpp to main.dll in the package.

@@ -31,7 +31,7 @@ pub enum BuildTarget {
 	MSBuild(PathBuf),
 	Cargo,
 	CMake,
-	GCC(PathBuf),
+	Gcc(PathBuf),
 	Premake5,
 	NotFound
 }
@@ -41,11 +41,11 @@ impl<'a> Package<'a> {
 		if let Some(ref fm) = self.filemap {
 			let pe = pelite::PeFile::from_bytes( fm.as_ref() ).map_err(VerifyError::Pe)?;
 
-			if let Err(_) = pe.get_export_by_name(GMOD_DLLOPEN) {
+			if pe.get_export_by_name(GMOD_DLLOPEN).is_err() {
 				return Err( VerifyError::NoEntry );
 			}
 
-			if let Err(_) = pe.get_export_by_name(GMOD_DLLCLOSE) {
+			if pe.get_export_by_name(GMOD_DLLCLOSE).is_err() {
 				return Err( VerifyError::NoExit );
 			}
 
@@ -98,7 +98,7 @@ impl<'a> Package<'a> {
 		}
 
 		if let Some(main_cpp) = gcc {
-			return Ok(BuildTarget::GCC(main_cpp));
+			return Ok(BuildTarget::Gcc(main_cpp));
 		}
 
 		Ok(BuildTarget::NotFound)
