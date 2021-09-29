@@ -1,11 +1,11 @@
 pub(crate) mod build;
 pub(crate) mod process;
 pub(crate) mod clone;
-pub(crate) mod cli;
+pub(crate) mod init;
 
 use anyhow::bail;
 
-use std::{io::{Read, Write}, path::PathBuf};
+use std::{io::Read, path::PathBuf};
 use url::Url;
 
 pub struct Package<'a> {
@@ -25,37 +25,33 @@ struct PackageInfo<'a> {
 	repo_url: &'a str
 }
 
+#[derive(Debug, thiserror::Error)]
+pub enum CreationError {
+	#[error("Package already exists")]
+	Exists,
+	#[error("IO Error: `{0}`")]
+	IO(std::io::Error),
+	#[error("Error when initializing: `{0}`")]
+	Init(init::InitError),
+}
+
 impl<'a> Package<'a> {
-	pub fn create(name: &'a str, repo_url: Url, mpath: PathBuf) -> anyhow::Result<Self> {
+	pub fn create(name: &'a str, repo_url: Url, mpath: PathBuf) -> Result<Self, CreationError> {
 		let cache = mpath
 			.join("cache")
 			.join(name);
 
 		if cache.exists() {
-			bail!("Package already exists");
+			return Err(CreationError::Exists);
 		}
 
 		let repo_dir = cache.join("repo");
 
 		if let Err(why) = std::fs::create_dir_all(&cache) {
-			bail!("IO Error: {} {}", cache.display(), why);
+			return Err(CreationError::IO(why));
 		}
 
-		match std::fs::File::create(cache.join("pkg.toml")) {
-			Ok(mut f) => {
-				let a = PackageInfo {
-					name: name,
-					repo_url: repo_url.as_str()
-				};
-				let b = toml::to_string(&a).unwrap();
-				f.write_all(b.as_bytes()).unwrap();
-			}
-			Err(why) => {
-				bail!("Error when creating pkg.toml. {}", why);
-			}
-		}
-
-		Ok(Self {
+		let this = Self {
 			name: name,
 			repo_url: repo_url,
 			mpath: mpath,
@@ -63,7 +59,11 @@ impl<'a> Package<'a> {
 			cache: cache,
 			repo: repo_dir,
 			filemap: None
-		})
+		};
+
+		this.init().map_err(CreationError::Init)?;
+
+		Ok(this)
 	}
 
 	pub fn open(name: &'a str, mpath: PathBuf) -> anyhow::Result<Self> {

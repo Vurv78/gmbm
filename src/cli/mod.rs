@@ -1,9 +1,9 @@
 mod commands;
-pub(crate) use super::Package;
+pub(crate) use crate::pkg::Package;
 
 pub fn process() -> Result<(), Box<dyn std::error::Error>>{
 	let opts = clap::clap_app!(gmbm =>
-		(version: "0.4.0")
+		(version: "0.5.0")
 		(author: "Vurv78 <vurvdevelops@gmail.com>")
 		(about: "Allows you to download garrysmod binary modules in one neat hub.")
 		(@subcommand init =>

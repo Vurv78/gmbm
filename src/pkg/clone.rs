@@ -1,6 +1,4 @@
 use super::Package;
-use crate::util;
-use std::{path::Path, process::Command};
 
 #[derive(Debug)]
 pub enum CloneError {

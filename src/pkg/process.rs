@@ -1,5 +1,6 @@
 use super::Package;
 use anyhow::bail;
+use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum VerifyError {
@@ -27,10 +28,10 @@ const GMOD_DLLOPEN: &str = "gmod13_open";
 const GMOD_DLLCLOSE: &str = "gmod13_close";
 
 pub enum BuildTarget {
-	MSBuild,
+	MSBuild(PathBuf),
 	Cargo,
 	CMake,
-	GCC(std::path::PathBuf),
+	GCC(PathBuf),
 	Premake5,
 	NotFound
 }
@@ -88,7 +89,7 @@ impl<'a> Package<'a> {
 				let path = file.path();
 				if let Some(ext) = path.extension() {
 					if ext == "sln" {
-						return Ok(BuildTarget::MSBuild);
+						return Ok(BuildTarget::MSBuild(path));
 					} else if ext == "cpp" {
 						gcc = Some(path)
 					}

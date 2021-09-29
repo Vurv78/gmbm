@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use super::Package;
+use crate::pkg::Package;
 
 pub fn build(x: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
 	use colored::*;

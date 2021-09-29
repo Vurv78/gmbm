@@ -23,7 +23,7 @@ impl<'a> Package<'a> {
 		match self.identify_target() {
 			Ok(x) => match x {
 				Cargo => cargo::try_compile(cache_dir, repo_dir, &out_path)?,
-				MSBuild => msbuild::try_compile(cache_dir, repo_dir, &out_path)?,
+				MSBuild(path) => msbuild::try_compile(cache_dir, repo_dir, &out_path)?,
 				CMake => cmake::try_compile(cache_dir, repo_dir, &out_path)?,
 				GCC(path) => gcc::try_compile(&path, &out_path)?,
 				Premake5 => premake::try_compile(cache_dir, repo_dir, &out_path)?,
