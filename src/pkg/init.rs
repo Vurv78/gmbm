@@ -21,7 +21,7 @@ impl<'a> Package<'a> {
 
 		let info = PackageInfo {
 			name: self.name,
-			repo_url: self.repo_url.as_str()
+			repo_url: self.repo_url.as_str(),
 		};
 
 		let toml_raw = toml::to_string(&info).map_err(InitError::Serde)?;

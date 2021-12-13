@@ -1,24 +1,27 @@
 use super::Package;
-use anyhow::bail;
 use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum VerifyError {
 	NotBuilt, // Not built yet. Need to call self.build()
-	NoEntry, // No entrypoint (gmod13_open) was found
-	NoExit, // No exitpoint (gmod13_close) was found
+	NoEntry,  // No entrypoint (gmod13_open) was found
+	NoExit,   // No exitpoint (gmod13_close) was found
 
-	Pe(pelite::Error) // Pelite error when trying to make PeFile.
+	Pe(pelite::Error), // Pelite error when trying to make PeFile.
 }
 
 impl std::fmt::Display for VerifyError {
 	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-		write!(f, "{}", match self {
-			VerifyError::NotBuilt => "Not built yet",
-			VerifyError::NoEntry => "No entrypoint (gmod13_open) was found",
-			VerifyError::NoExit => "No exitpoint (gmod13_close) was found",
-			VerifyError::Pe(_) => "Pelite error"
-		})
+		write!(
+			f,
+			"{}",
+			match self {
+				VerifyError::NotBuilt => "Not built yet",
+				VerifyError::NoEntry => "No entrypoint (gmod13_open) was found",
+				VerifyError::NoExit => "No exitpoint (gmod13_close) was found",
+				VerifyError::Pe(_) => "Pelite error",
+			}
+		)
 	}
 }
 
@@ -33,32 +36,41 @@ pub enum BuildTarget {
 	CMake,
 	Gcc(PathBuf),
 	Premake5,
-	NotFound
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum BuildTargetError {
+	#[error("Cache does not exist")]
+	CacheDNE,
+	#[error("Error when scanning directory: {0}")]
+	IOError(#[from] std::io::Error),
+	#[error("No build target could be identified")]
+	NotFound,
 }
 
 impl<'a> Package<'a> {
 	pub fn verify(&self) -> VerifyResult {
 		if let Some(ref fm) = self.filemap {
-			let pe = pelite::PeFile::from_bytes( fm.as_ref() ).map_err(VerifyError::Pe)?;
+			let pe = pelite::PeFile::from_bytes(fm.as_ref()).map_err(VerifyError::Pe)?;
 
 			if pe.get_export_by_name(GMOD_DLLOPEN).is_err() {
-				return Err( VerifyError::NoEntry );
+				return Err(VerifyError::NoEntry);
 			}
 
 			if pe.get_export_by_name(GMOD_DLLCLOSE).is_err() {
-				return Err( VerifyError::NoExit );
+				return Err(VerifyError::NoExit);
 			}
 
 			Ok(())
 		} else {
-			Err( VerifyError::NotBuilt )
+			Err(VerifyError::NotBuilt)
 		}
 	}
 
 	// Tries to find what to compile the package with.
-	pub fn identify_target(&self) -> anyhow::Result<BuildTarget> {
+	pub fn identify_target(&self) -> Result<BuildTarget, BuildTargetError> {
 		if !self.cache.exists() {
-			bail!("Cache does not exist")
+			return Err(BuildTargetError::CacheDNE);
 		}
 
 		{
@@ -101,6 +113,6 @@ impl<'a> Package<'a> {
 			return Ok(BuildTarget::Gcc(main_cpp));
 		}
 
-		Ok(BuildTarget::NotFound)
+		Err(BuildTargetError::NotFound)
 	}
 }

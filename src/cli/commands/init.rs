@@ -1,8 +1,8 @@
-use clap::ArgMatches;
+use super::prelude::*;
 use std::fs::{self, File};
 use std::io::prelude::*;
 
-pub fn init(_: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
+pub fn init(_: &ArgMatches) -> Result<(), CommandError> {
 	let pkg_dir = crate::util::current_exe_dir()?;
 
 	let package_dir = pkg_dir.join("cache"); // Package source install directories, where they're built and then installed to your gmod dir.
@@ -14,7 +14,7 @@ pub fn init(_: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
 	fs::create_dir_all(&dat_dir)?;
 
 	let mut handle = File::create(dat_dir.join("premake5.lua"))?;
-	handle.write_all( include_bytes!("../../premake5.lua") )?;
+	handle.write_all(include_bytes!("../../premake5.lua"))?;
 
 	Ok(())
 }

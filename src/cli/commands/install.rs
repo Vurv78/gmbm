@@ -1,18 +1,13 @@
+use super::prelude::*;
 
-use clap::ArgMatches;
-use super::Package;
-
-pub fn install(x: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
+pub fn install(x: &ArgMatches) -> Result<(), CommandError> {
 	use std::path::PathBuf;
 	use colored::*;
 
 	let pkg_name = x.value_of("PKG_NAME").unwrap();
 
 	// Package main dir
-	let dir = match x.value_of("dir") {
-		Some(path) => path.into(),
-		None => crate::util::current_exe_dir()?
-	};
+	let dir = get_pkg_dir(x)?;
 
 	// Gmod realm. Defaults to client
 	let realm = x.value_of("realm").unwrap_or("cl");

@@ -1,20 +1,13 @@
 use super::Package;
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum CloneError {
+	#[error("Already exists")]
 	Exists,
+	#[error("IO Error `{0}`")]
 	Io(std::io::Error),
-	Git(git2::Error)
-}
-
-impl std::fmt::Display for CloneError {
-	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-		write!(f, "{}", match self {
-			CloneError::Exists => "Already exists".to_owned(),
-			CloneError::Io(e) => format!("IO Error: {}", e),
-			CloneError::Git(e) => format!("Git clone failed with code: {}", e)
-		})
-	}
+	#[error("Git clone failed with error: `{0}`")]
+	Git(git2::Error),
 }
 
 impl<'a> Package<'a> {
@@ -24,7 +17,7 @@ impl<'a> Package<'a> {
 		let git_dir = cache_dir.join("repo");
 
 		if git_dir.exists() {
-			return Err( CloneError::Exists );
+			return Err(CloneError::Exists);
 		}
 
 		std::fs::create_dir_all(&git_dir).map_err(CloneError::Io)?;
