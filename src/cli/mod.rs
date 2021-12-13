@@ -16,7 +16,6 @@ pub fn process() -> Result<(), ProcessError> {
 		.about( clap::crate_description!() )
 		.version( clap::crate_version!() )
 		.author( clap::crate_authors!() )
-		.license( clap::crate_license!() )
 		.alias("gm" )
 		.subcommands(vec![
 			App::new("init")
@@ -26,19 +25,19 @@ pub fn process() -> Result<(), ProcessError> {
 				.about("Clones a binary module repo without building it.")
 				.arg(
 					Arg::new("REPO_URL")
-						.about("Sets the input repo to use. Ex: https://github.com/Vurv78/Autorun-rs")
+						.help("Sets the input repo to use. Ex: https://github.com/Vurv78/Autorun-rs")
 						.required(true)
 				)
 				.arg(
 					Arg::new("PKG_NAME")
 						.short('n')
-						.about("Sets the output name and folder to use for the package. By default it is the name of the github repo")
+						.help("Sets the output name and folder to use for the package. By default it is the name of the github repo")
 						.required(false)
 				)
 				.arg(
 					Arg::new("PKG_DIR")
 						.short('p')
-						.about("Sets the directory where the packages will be found. Defaults to exe dir")
+						.help("Sets the directory where the packages will be found. Defaults to exe dir")
 						.required(false)
 				),
 
@@ -46,13 +45,13 @@ pub fn process() -> Result<(), ProcessError> {
 				.about("Builds a binary module from a repo")
 				.arg(
 					Arg::new("PKG_NAME")
-						.about("Sets the input repo to use. Ex: gm_bromsock")
+						.help("Sets the input repo to use. Ex: gm_bromsock")
 						.required(true)
 				)
 				.arg(
 					Arg::new("PKG_DIR")
 						.short('p')
-						.about("Sets the directory where the packages will be found. Defaults to exe dir")
+						.help("Sets the directory where the packages will be found. Defaults to exe dir")
 						.required(false)
 				),
 
@@ -60,13 +59,13 @@ pub fn process() -> Result<(), ProcessError> {
 				.about("Verifies that a binary module built correctly")
 				.arg(
 					Arg::new("PKG_NAME")
-						.about("Sets the package to be verified. Must first build it.")
+						.help("Sets the package to be verified. Must first build it.")
 						.required(true)
 				)
 				.arg(
 					Arg::new("PKG_DIR")
 						.short('p')
-						.about("Sets the directory where the packages will be found. Defaults to exe dir")
+						.help("Sets the directory where the packages will be found. Defaults to exe dir")
 						.required(false)
 				),
 
@@ -74,27 +73,27 @@ pub fn process() -> Result<(), ProcessError> {
 				.about("Installs a built binary module to your garrysmod/lua/bin folder")
 				.arg(
 					Arg::new("PKG_NAME")
-						.about("The package's build to install into garrysmod")
+						.help("The package's build to install into garrysmod")
 						.required(true)
 				)
 				.arg(
 					Arg::new("PKG_DIR")
 						.short('p')
-						.about("Sets the directory where the packages will be found. Defaults to exe dir")
+						.help("Sets the directory where the packages will be found. Defaults to exe dir")
 						.required(false)
 				)
 				.arg(
 					Arg::new("GMOD_DIR")
 						.short('d')
 						.long("gmod_dir")
-						.about("Sets the directory where gmod will be found. By default it searches for garrysmod")
+						.help("Sets the directory where gmod will be found. By default it searches for garrysmod")
 						.required(false)
 				)
 				.arg(
 					Arg::new("REALM")
 						.short('r')
 						.long("realm")
-						.about("Sets the realm of the package. Defaults to 'cl' for client")
+						.help("Sets the realm of the package. Defaults to 'cl' for client")
 						.required(false)
 						.possible_values(&["cl", "sv"])
 				)
