@@ -1,28 +1,30 @@
-name: Build & Lint
+name: Build
 
 on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always
 
-# Repurposed from Autorun-rs
-
 jobs:
-  buildx86_64:
+  buildx64:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: cargo build --release --verbose
+      run: |
+        rustup default nightly
+        cargo build --release --verbose
 
-    - name: Upload program
+    - name: Clippy
+      run: |
+        rustup component add clippy
+        cargo clippy
+
+    - name: Upload DLL
       uses: actions/upload-artifact@v2
       with:
-        name: Windows 64 Bit
+        name: 64 Bit
         path: target/release/gmbm.exe
-
-    - name: Lint
-      run: cargo clippy
 
   buildx86:
     runs-on: windows-latest
@@ -30,11 +32,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run: |
+        rustup default nightly
         rustup target add i686-pc-windows-msvc
         cargo build --release --verbose --target=i686-pc-windows-msvc
 
-    - name: Upload program
+    - name: Upload DLL
       uses: actions/upload-artifact@v2
       with:
-        name: Windows 32 Bit
+        name: 32 Bit
         path: target/i686-pc-windows-msvc/release/gmbm.exe
