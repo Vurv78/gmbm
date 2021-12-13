@@ -3,6 +3,7 @@ name = "gmbm"
 authors = ["Vurv78 <vurvdevelops@gmail.com>"]
 description = "CLI to manage and download garrysmod binary modules"
 version = "0.6.0"
+repository = "https://github.com/Vurv78/gmbm"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
