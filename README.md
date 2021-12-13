@@ -1,4 +1,4 @@
-# ``gmbm`` [![Release Shield](https://img.shields.io/github/v/release/Vurv78/gmbm)](https://github.com/Vurv78/gmbm/releases/latest) ![CI](https://github.com/Vurv78/Autorun-rs/workflows/Build/badge.svg) [![github/Vurv78](https://img.shields.io/discord/824727565948157963?label=Discord&logo=discord&logoColor=ffffff&labelColor=7289DA&color=2c2f33)](https://discord.gg/epJFC6cNsw)
+# ``gmbm`` [![Release Shield](https://img.shields.io/github/v/release/Vurv78/gmbm)](https://github.com/Vurv78/gmbm/releases/latest) ![CI](https://github.com/Vurv78/gmbm/actions/workflows/ci.yml/badge.svg) [![github/Vurv78](https://img.shields.io/discord/824727565948157963?label=Discord&logo=discord&logoColor=ffffff&labelColor=7289DA&color=2c2f33)](https://discord.gg/epJFC6cNsw)
 > Binary module manager for garrysmod.  
 
 ## Commands

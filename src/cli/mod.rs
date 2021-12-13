@@ -93,8 +93,10 @@ pub fn process() -> Result<(), ProcessError> {
 				.arg(
 					Arg::new("REALM")
 						.short('r')
-						.about("Sets the package to build. By default it is the name of the github repo")
+						.long("realm")
+						.about("Sets the realm of the package. Defaults to 'cl' for client")
 						.required(false)
+						.possible_values(&["cl", "sv"])
 				)
 		])
 		.setting(AppSettings::SubcommandRequiredElseHelp)

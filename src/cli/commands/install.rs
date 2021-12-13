@@ -10,7 +10,7 @@ pub fn install(x: &ArgMatches) -> Result<(), CommandError> {
 	let dir = get_pkg_dir(x)?;
 
 	// Gmod realm. Defaults to client
-	let realm = x.value_of("realm").unwrap_or("cl");
+	let realm = x.value_of("REALM").unwrap_or("cl");
 
 	fn find_gmod_dir() -> Option<PathBuf> {
 		const STEAM_FOLDERS: &[&str] = &[
@@ -74,7 +74,7 @@ pub fn install(x: &ArgMatches) -> Result<(), CommandError> {
 		};
 	}
 
-	match x.value_of("gmod_dir") {
+	match x.value_of("GMOD_DIR") {
 		Some(gmod_dir) => install(pkg_name, dir, gmod_dir.into(), realm),
 		None => {
 			match find_gmod_dir() {

@@ -1,5 +1,6 @@
 [package]
 name = "gmbm"
+authors = ["Vurv78 <vurvdevelops@gmail.com>"]
 description = "CLI to manage and download garrysmod binary modules"
 version = "0.6.0"
 edition = "2021"
